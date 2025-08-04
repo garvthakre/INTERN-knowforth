@@ -1,3 +1,5 @@
+import pool from '../config/db.js';
+
 export const updateProfile = async (req, res) => {
   try {
     const { name, business_desc } = req.body;

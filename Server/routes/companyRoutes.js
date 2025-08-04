@@ -1,3 +1,8 @@
+import express from 'express';
+import { getACompany } from '../controllers/companyController.js';
+
+const router = express.Router();
+
 /**
  * @swagger
  * /company/getACompany/{id}:
@@ -17,3 +22,5 @@
  *         description: Not found
  */
 router.get('/getACompany/:id', getACompany);
+
+export default router;

@@ -1,3 +1,5 @@
+import pool from '../config/db.js';
+
 export const getACompany = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM companies WHERE id = $1', [req.params.id]);
