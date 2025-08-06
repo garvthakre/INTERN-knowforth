@@ -12,14 +12,14 @@ import personnelRoutes from './routes/personnelRoutes.js';
 import achievementRoutes from './routes/achievementsRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import articleRoutes from './routes/articleRoutes.js';
-import { article } from 'framer-motion/client'
 import messageRoutes from './routes/messageRoutes.js';
 import connectionRoutes from './routes/connectionRoutes.js';
 import searchRoutes from './routes/searchRoutes.js';
 import subscriptionRoutes from './routes/subscriptionRoutes.js';
 import feedbackRoutes from './routes/feedbackRoutes.js';
 import masterRoutes from './routes/masterRoutes.js';
-import buisnessRoutes from './routes/businessRoutes.js';
+import businessRoutes from './routes/businessRoutes.js'; // Fixed typo
+
 dotenv.config();
 const app = express();
 
@@ -38,6 +38,15 @@ const swaggerSpec = swaggerJSDoc({
         description: 'Local development server',
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
   apis: ['./routes/*.js'],  
 });
@@ -53,15 +62,16 @@ app.use('/api/company', companyRoutes);
 app.use('/api/address', addressRoutes);
 app.use('/api/personnel', personnelRoutes);
 app.use('/api/achievement', achievementRoutes);
-app.use('/api/project',projectRoutes);
-app.use('/api/article',articleRoutes);
-app.use('/api/message',messageRoutes);
-app.use('/api/connection',connectionRoutes);
-app.use('/api/search',searchRoutes);
-app.use('/api/sub',subscriptionRoutes);
-app.use('/api/feedback',feedbackRoutes);
-app.use('/api/master',masterRoutes);
-app.use('/api/business',buisnessRoutes);
+app.use('/api/project', projectRoutes);
+app.use('/api/article', articleRoutes);
+app.use('/api/message', messageRoutes);
+app.use('/api/connection', connectionRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/sub', subscriptionRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/master', masterRoutes);
+app.use('/api/business', businessRoutes);  
+
 // Swagger documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -72,6 +82,6 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(` Server running on port ${PORT}`);
-  console.log(` Swagger docs: http://localhost:${PORT}/api-docs`);
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Swagger docs: http://localhost:${PORT}/api-docs`);
 });
