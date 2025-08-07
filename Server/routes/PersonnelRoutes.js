@@ -15,7 +15,7 @@ const router = express.Router();
  * /personnel/saveCompPerson:
  *   post:
  *     summary: Create a new personnel
- *     tags: [Personnel]
+ *     tags: [Company]
  *     security:
  *       - bearerAuth: []
  *     requestBody:

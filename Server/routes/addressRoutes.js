@@ -14,7 +14,7 @@ const router = express.Router();
  * /address/saveCompAddress:
  *   post:
  *     summary: Create a new company address
- *     tags: [Address]
+ *     tags: [Company]
  *     security:
  *       - bearerAuth: []
  *     requestBody:

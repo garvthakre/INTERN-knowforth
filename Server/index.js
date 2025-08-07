@@ -70,7 +70,7 @@ app.use('/api/search', searchRoutes);
 app.use('/api/sub', subscriptionRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/master', masterRoutes);
-app.use('/api/business', businessRoutes);  
+// app.use('/api/business', businessRoutes);  
 
 // Swagger documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

@@ -15,7 +15,7 @@ const router = express.Router();
  * /achievement/saveCompAchievement:
  *   post:
  *     summary: Create a new company achievement
- *     tags: [Achievement]
+ *     tags: [Company]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
