@@ -13,3 +13,13 @@ export const createUser = async ({ email, passwordHash, companyId }) => {
   );
   return res.rows[0];
 };
+
+// Get user with company details
+export const getUserWithCompany = async (userId) => {
+  const res = await pool.query(`
+    SELECT u.*, u.company_id 
+    FROM users u 
+    WHERE u.id = $1
+  `, [userId]);
+  return res.rows[0];
+};

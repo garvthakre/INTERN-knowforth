@@ -10,7 +10,16 @@ export const SignupCompany = async (req, res) => {
       email,
       password,
       gstin,
-      primary_category
+      primary_category,
+      founding_year,
+      contact,
+      business_desc,
+      website,
+      turnover,
+      staff_strength,
+      company_type,
+      locations = [],
+      sub_categories = []
     } = req.body;
 
     // Validate required fields
@@ -40,29 +49,31 @@ export const SignupCompany = async (req, res) => {
     await pool.query('BEGIN');
 
     try {
-      // Create user first
+      // Create company first
+      const companyResult = await pool.query(
+        `INSERT INTO companies (
+          name, founding_year, business_desc, gstin, turnover, 
+          staff_strength, company_type
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7) 
+        RETURNING *`,
+        [
+          name, founding_year, primary_category, gstin, turnover, 
+          staff_strength, company_type
+        ]
+      );
+
+      const company = companyResult.rows[0];
+
+      // Create user with company_id
       const userResult = await pool.query(
-        'INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id',
-        [email, passwordHash]
+        'INSERT INTO users (email, password_hash, company_id) VALUES ($1, $2, $3) RETURNING id',
+        [email, passwordHash, company.id]
       );
       
       const userId = userResult.rows[0].id;
 
-      // Create company with only essential fields (matching your table structure)
-      const companyResult = await pool.query(
-        `INSERT INTO companies (
-          name, business_desc, gstin
-        ) VALUES ($1, $2, $3) 
-        RETURNING *`,
-        [
-          name, primary_category, gstin
-        ]
-      );
-
       // Commit transaction
       await pool.query('COMMIT');
-
-      const company = companyResult.rows[0];
 
       // Generate JWT token
       const token = jwt.sign(
@@ -124,31 +135,31 @@ export const updateCompanyProfile = async (req, res) => {
     let paramCount = 1;
 
     if (name !== undefined) {
-      updates.push(`name = ${paramCount++}`);
+      updates.push(`name = $${paramCount++}`);
       values.push(name);
     }
     if (founding_year !== undefined) {
-      updates.push(`founding_year = ${paramCount++}`);
+      updates.push(`founding_year = $${paramCount++}`);
       values.push(founding_year);
     }
     if (business_desc !== undefined) {
-      updates.push(`business_desc = ${paramCount++}`);
+      updates.push(`business_desc = $${paramCount++}`);
       values.push(business_desc);
     }
     if (gstin !== undefined) {
-      updates.push(`gstin = ${paramCount++}`);
+      updates.push(`gstin = $${paramCount++}`);
       values.push(gstin);
     }
     if (turnover !== undefined) {
-      updates.push(`turnover = ${paramCount++}`);
+      updates.push(`turnover = $${paramCount++}`);
       values.push(turnover);
     }
     if (staff_strength !== undefined) {
-      updates.push(`staff_strength = ${paramCount++}`);
+      updates.push(`staff_strength = $${paramCount++}`);
       values.push(staff_strength);
     }
     if (company_type !== undefined) {
-      updates.push(`company_type = ${paramCount++}`);
+      updates.push(`company_type = $${paramCount++}`);
       values.push(company_type);
     }
 
@@ -157,7 +168,7 @@ export const updateCompanyProfile = async (req, res) => {
     }
 
     values.push(id); // Add id for WHERE clause
-    const query = `UPDATE companies SET ${updates.join(', ')} WHERE id = ${paramCount} RETURNING *`;
+    const query = `UPDATE companies SET ${updates.join(', ')} WHERE id = $${paramCount} RETURNING *`;
 
     const result = await pool.query(query, values);
 
@@ -190,5 +201,3 @@ export const getACompany = async (req, res) => {
     res.status(500).json({ msg: 'Error fetching company', error: err.message });
   }
 };
-
- 
