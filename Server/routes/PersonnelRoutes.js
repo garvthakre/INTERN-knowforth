@@ -25,15 +25,17 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             properties:
+ *               type:
+ *                 type: string
  *               name:
+ *                 type: string
+ *               department:
  *                 type: string
  *               designation:
  *                 type: string
  *               phone:
  *                 type: string
  *               email:
- *                 type: string
- *               department:
  *                 type: string
  *     responses:
  *       201:
@@ -94,15 +96,17 @@ router.get('/getACompPerson/:id', getACompPerson);
  *             properties:
  *               id:
  *                 type: integer
+ *               type:
+ *                 type: string
  *               name:
+ *                 type: string
+ *               department:
  *                 type: string
  *               designation:
  *                 type: string
  *               phone:
  *                 type: string
  *               email:
- *                 type: string
- *               department:
  *                 type: string
  *     responses:
  *       200:
