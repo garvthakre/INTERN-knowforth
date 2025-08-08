@@ -109,6 +109,79 @@ export const SignupCompany = async (req, res) => {
   }
 };
 
+// Add this function to your Server/controllers/companyController.js file
+
+// Login Company
+export const loginCompany = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validate required fields
+    if (!email || !password) {
+      return res.status(400).json({ 
+        msg: 'Please provide email and password' 
+      });
+    }
+
+    // Check if user exists and get company details
+    const userResult = await pool.query(`
+      SELECT u.*, c.name as company_name, c.gstin, c.status as company_status
+      FROM users u 
+      LEFT JOIN companies c ON u.company_id = c.id 
+      WHERE u.email = $1
+    `, [email]);
+
+    if (userResult.rowCount === 0) {
+      return res.status(401).json({ msg: 'Invalid email or password' });
+    }
+
+    const user = userResult.rows[0];
+
+    // Check if user has a company associated
+    if (!user.company_id) {
+      return res.status(401).json({ msg: 'No company associated with this account' });
+    }
+
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+    if (!isPasswordValid) {
+      return res.status(401).json({ msg: 'Invalid email or password' });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { 
+        id: user.id, 
+        companyId: user.company_id,
+        email: user.email
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    // Return success response
+    res.json({
+      msg: 'Login successful',
+      user: {
+        id: user.id,
+        email: user.email,
+        companyId: user.company_id
+      },
+      company: {
+        id: user.company_id,
+        name: user.company_name,
+        gstin: user.gstin,
+        status: user.company_status
+      },
+      token
+    });
+
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ msg: 'Server error during login', error: err.message });
+  }
+};
+
 // Update Company Profile
 export const updateCompanyProfile = async (req, res) => {
   try {

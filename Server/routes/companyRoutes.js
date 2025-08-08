@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   SignupCompany,
+  loginCompany,
   updateCompanyProfile,
   getACompany,
   
@@ -101,6 +102,99 @@ const router = express.Router();
  *         description: Company already exists
  */
 router.post('/signup', SignupCompany);
+
+/**
+ * @swagger
+ * /company/login:
+ *   post:
+ *     summary: Login to company account
+ *     tags: [Company]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Company email address
+ *                 example: company@example.com
+ *               password:
+ *                 type: string
+ *                 description: Password for the account
+ *                 example: yourpassword123
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: Login successful
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     email:
+ *                       type: string
+ *                     companyId:
+ *                       type: integer
+ *                 company:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     name:
+ *                       type: string
+ *                     gstin:
+ *                       type: string
+ *                     status:
+ *                       type: string
+ *                 token:
+ *                   type: string
+ *                   description: JWT token for authentication
+ *       400:
+ *         description: Bad request - missing email or password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: Please provide email and password
+ *       401:
+ *         description: Unauthorized - invalid credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: Invalid email or password
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: Server error during login
+ */
+router.post('/login', loginCompany);
+
 
 /**
  * @swagger
